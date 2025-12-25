@@ -48,6 +48,9 @@ export const createOrderOfUserCart = catchAsync(
           400
         );
       }
+      producDoc.ref.update({
+        stock: productStock - product.quantity,
+      });
       totalPrice += product.price * product.quantity;
     }
     const orderRef = await db.collection("orders").add({
