@@ -59,7 +59,7 @@ export const createOrderOfUserCart = catchAsync(
       const productStock = productData.stock;
       if (productStock < product.quantity) {
         throw new AppError(
-          `Not enough stock of this product: ${product.name}, current stock: ${productStock.stock}`,
+          `Not enough stock of this product: ${product.name}, current stock: ${productStock}`,
           400
         );
       }
