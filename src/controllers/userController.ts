@@ -19,6 +19,8 @@ export const getUserData = catchAsync(async (req: Request, res: Response) => {
     .where("userId", "==", userId)
     .get();
   const userCart = await db.collection("carts").doc(userId).get();
+  const productsDoc = await db.collection("products").get();
+  const products = productsDoc.docs.map((doc) => doc.data());
 
   res.status(200).json({
     status: "success",
@@ -30,6 +32,7 @@ export const getUserData = catchAsync(async (req: Request, res: Response) => {
       },
       orders: [...ordersOfUser.docs.map((doc) => doc.data())],
       cart: userCart.data(),
+      products,
     },
   });
 });
