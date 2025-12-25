@@ -80,11 +80,14 @@ export const createOrderOfUserCart = catchAsync(
     });
     orderRef.update({ orderId: orderRef.id });
     await db.collection("carts").doc(userId).delete();
+    const orderDoc =await db.collection("orders").doc(orderRef.id).get();
+    const orderData = orderDoc.data();
     res.status(200).json({
       status: "success",
       message: "Order created successfully",
       data: {
         orderId: orderRef.id,
+        orderData,
       },
     });
   }
