@@ -7,7 +7,7 @@ import { AppError, catchAsync } from "../middlewares/error-handler";
 export const createOrderOfUserCart = catchAsync(
   async (req: Request, res: Response) => {
     const userId = req.params.id;
-    const { address } = req.body;
+    const { address, phoneNumber } = req.body;
     if (!userId) {
       throw new NotFoundError("UserId");
     }
@@ -26,7 +26,13 @@ export const createOrderOfUserCart = catchAsync(
       user.address = address;
       await userDoc.ref.update(user);
     }
-
+    if (!user.phone) {
+      if (!phoneNumber) {
+        throw new NotFoundError("PhoneNumber");
+      }
+      user.phone = phoneNumber;
+      await userDoc.ref.update(user);
+    }
     const cartDoc = await db.collection("carts").doc(userId).get();
     if (!cartDoc.exists) {
       throw new NotFoundError("Cart");
