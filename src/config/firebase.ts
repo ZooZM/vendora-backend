@@ -1,24 +1,21 @@
 import admin from "firebase-admin";
-import * as serviceAccount from "../../serviceAccountKey.json";
+import dotenv from "dotenv";
 
-const params = {
-  type: serviceAccount.type,
-  projectId: serviceAccount.project_id,
-  privateKeyId: serviceAccount.private_key_id,
-  privateKey: serviceAccount.private_key,
-  clientEmail: serviceAccount.client_email,
-  clientId: serviceAccount.client_id,
-  authUri: serviceAccount.auth_uri,
-  tokenUri: serviceAccount.token_uri,
-  authProviderX509CertUrl: serviceAccount.auth_provider_x509_cert_url,
-  clientC509CertUrl: serviceAccount.client_x509_cert_url,
+dotenv.config();
+
+const serviceAccount: admin.ServiceAccount = {
+  projectId: process.env.FIREBASE_PROJECT_ID || "",
+  privateKey: process.env.FIREBASE_PRIVATE_KEY
+    ? process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, "\n")
+    : "",
+  clientEmail: process.env.FIREBASE_CLIENT_EMAIL || "",
 };
 
-admin.initializeApp({
-  credential: admin.credential.cert(params),
-  // لو هتستخدم Realtime DB ضيف السطر ده، لو Firestore مش لازم
-  // databaseURL: "https://vendora-xxxx.firebaseio.com"
-});
+if (!admin.apps.length) {
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+  });
+}
 
-export const db = admin.firestore(); // لو بتستخدم Firestore
-export const auth = admin.auth(); // لو هتتحكم في اليوزرز
+export const db = admin.firestore();
+export const auth = admin.auth();
